@@ -1,0 +1,10 @@
+{
+  "name": "my-first-api",
+  "version": "1.0.0",
+  "description": "A beginner-friendly Node.js API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
