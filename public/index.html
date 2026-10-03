@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+
+    <title>My First API</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #eef2ff;
+        color: #172033;
+        font-family: Arial, sans-serif;
+      }
+
+      main {
+        width: min(680px, 100%);
+        padding: 32px;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 18px 45px rgba(44, 62, 110, 0.14);
+      }
+
+      .endpoint {
+        padding: 12px;
+        border-radius: 8px;
+        background: #111827;
+        color: #d1fae5;
+        font-family: monospace;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        margin: 24px 0;
+      }
+
+      input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 12px 18px;
+        border: 0;
+        border-radius: 8px;
+        background: #4f46e5;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      li {
+        margin: 10px 0;
+      }
+
+      #status {
+        color: #64748b;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <h1>My First API</h1>
+
+      <p>
+        This webpage communicates with the server through:
+      </p>
+
+      <div class="endpoint">GET /api/messages</div>
+
+      <form id="message-form">
+        <input
+          id="message-input"
+          placeholder="Write a message"
+          required
+        />
+
+        <button type="submit">Send to API</button>
+      </form>
+
+      <p id="status">Loading messages...</p>
+      <ul id="message-list"></ul>
+    </main>
+
+    <script>
+      const form = document.querySelector("#message-form");
+      const input = document.querySelector("#message-input");
+      const list = document.querySelector("#message-list");
+      const status = document.querySelector("#status");
+
+      async function loadMessages() {
+        const response = await fetch("/api/messages");
+        const messages = await response.json();
+
+        list.innerHTML = "";
+
+        for (const message of messages) {
+          const item = document.createElement("li");
+          item.textContent = `${message.id}: ${message.text}`;
+          list.appendChild(item);
+        }
+
+        status.textContent =
+          `API returned ${messages.length} message(s).`;
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        await fetch("/api/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: input.value,
+          }),
+        });
+
+        input.value = "";
+        await loadMessages();
+      });
+
+      loadMessages();
+    </script>
+  </body>
+</html>
